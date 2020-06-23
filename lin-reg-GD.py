@@ -26,14 +26,16 @@ def compute_change(theta, zero_indicator = False):
     '''
     if zero_indicator:
         prediction = (theta_1 * predictor_col) + theta_0
-        error = (learning_rate / len(predictor_col)) * (prediction - result_col).sum()
+        error = (1 / len(predictor_col)) * (prediction - result_col).sum()
         theta_0_loss_values.append(abs(error))
-        new_theta = theta - error
+        change = learning_rate * error
+        new_theta = theta - change
     else:
         prediction = (theta_1 * predictor_col) + theta_0
-        error = (learning_rate / len(predictor_col)) * ((prediction - result_col)*predictor_col).sum()
+        error = (1 / len(predictor_col)) * ((prediction - result_col)*predictor_col).sum()
         theta_1_loss_values.append(abs(error))
-        new_theta = theta - error
+        change = learning_rate * error
+        new_theta = theta - change
     return new_theta
 
 for i in range(iterations):
