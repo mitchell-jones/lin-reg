@@ -4,20 +4,31 @@ import numpy as np
 # Graphing
 import matplotlib.pyplot as plt
 
+class theta():
+    def __init__(self, is_theta_0 = False, val = 0):
+        self.is_theta_0 = is_theta_0
+        self.val = val
+
+    def compute(self):
+        self.temp_val = compute_change(self.val, self.is_theta_0)
+
+    def update(self):
+        self.val = self.temp_val
+
 # Generating Data
-predictor_col = 2 * np.random.rand(100,1)
-result_col = 6 + 5 * predictor_col+np.random.randn(100,1)
+X_1 = 2 * np.random.rand(100,1)
+Y = 6 + 5 * X_1+np.random.randn(100,1)
 
 # Initializing Theta Values, Learning Rate, and Number of Iterations
-theta_0, theta_1 = 0,0
-learning_rate = 0.1
-iterations = 50
+theta_0, theta_1 = theta(True), theta()
+learning_rate = 0.2
+iterations = 100
 
 # Theta 0 & 1 Loss History
 theta_0_loss_values = []
 theta_1_loss_values = []
 
-def compute_change(theta, zero_indicator = False):
+def compute_change(theta_val, zero_indicator = False):
     '''
     Compute the change to given theta.
     :param theta: Theta Coefficient.
@@ -25,27 +36,29 @@ def compute_change(theta, zero_indicator = False):
     :return: New value of coefficient.
     '''
     if zero_indicator:
-        prediction = (theta_1 * predictor_col) + theta_0
-        error = (1 / len(predictor_col)) * (prediction - result_col).sum()
+        prediction = (theta_1.val * X_1) + theta_0.val
+        error = (1 / len(X_1)) * (prediction - Y).sum()
         theta_0_loss_values.append(abs(error))
         change = learning_rate * error
-        new_theta = theta - change
+        new_theta = theta_val - change
     else:
-        prediction = (theta_1 * predictor_col) + theta_0
-        error = (1 / len(predictor_col)) * ((prediction - result_col)*predictor_col).sum()
+        prediction = (theta_1.val * X_1) + theta_0.val
+        error = (1 / len(X_1)) * ((prediction - Y)*X_1).sum()
         theta_1_loss_values.append(abs(error))
         change = learning_rate * error
-        new_theta = theta - change
+        new_theta = theta_val - change
     return new_theta
 
 for i in range(iterations):
-    # For every iteration, update theta_0 and theta_1 simultaneously
-    theta_0, theta_1 = compute_change(theta_0, True), compute_change(theta_1)
+    theta_0.compute()
+    theta_1.compute()
+    theta_0.update()
+    theta_1.update()
 
 # Create Prediction Line for entire data
-final_prediction = theta_0 + (theta_1*predictor_col)
-plt.plot(predictor_col, final_prediction, '-r', label = 'Predictions')
-plt.scatter(predictor_col, result_col)
+final_prediction = theta_0.val + (theta_1.val*X_1)
+plt.plot(X_1, final_prediction, '-r', label = 'Predictions')
+plt.scatter(X_1, Y)
 plt.title('Predictions vs. Real Values')
 plt.show()
 
