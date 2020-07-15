@@ -112,10 +112,10 @@ def fit():
     RMSE = np.sqrt(((final_prediction - Y)**2).sum() / samples)
     print('Final RSME:', RMSE)
 
+learning_rate = 0.01
+epochs = 250
 # Gradient Descent parameters
 while True:
-    learning_rate = 0.01
-    epochs = 250
     print('\nTime to tune your parameters - Here are your previous parameters:\n'
       'Learning Rate: %s\n'
       'Epochs: %s' % (learning_rate, epochs))
